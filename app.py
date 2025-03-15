@@ -3,6 +3,9 @@ from google import genai
 from google.genai import types
 import os
 import tempfile
+import dotenv
+
+dotenv.load_dotenv()
 
 st.subheader("System Message")
 system_msg = st.text_area("  ", height=150, 
@@ -19,7 +22,8 @@ with col2:
     pdf = st.file_uploader("  ", type=["pdf"])
 
 def generate():
-    api_key = "AIzaSyDz06ZkDRyCRCkoxJiTYtQNLCqEWVHR7f4"
+    
+    api_key = os.getenv('API_KEY')
     
     client = genai.Client(
         api_key=api_key,
@@ -84,3 +88,4 @@ def generate():
 if st.button("Analyze PDF"):
     if pdf is not None:
             generate()
+
