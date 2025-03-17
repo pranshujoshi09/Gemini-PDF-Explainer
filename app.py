@@ -7,12 +7,9 @@ import dotenv
 
 dotenv.load_dotenv()
 
-# Initialize session state variables
+# Initialize session state for prompt selection
 if 'selected_prompt' not in st.session_state:
     st.session_state.selected_prompt = ""
-
-if 'pdf_uploaded' not in st.session_state:
-    st.session_state.pdf_uploaded = None
 
 st.subheader("System Message")
 system_msg = st.text_area("  ", height=150, placeholder="Write System message...")
@@ -22,7 +19,8 @@ st.subheader("Prompt")
 col1, col2 = st.columns([3.5, 1.5])
 
 with col1:
-    prompt = st.text_area("  ", height=132, placeholder="Ask anything..", key="prompt_area")
+    # Automatically update text area with the selected prompt
+    prompt = st.text_area("  ", height=132, placeholder="Ask anything..", key="prompt_area", value=st.session_state.selected_prompt)
 
 with col2:
     pdf = st.file_uploader("  ", type=["pdf"])
@@ -32,12 +30,9 @@ def generate():
     api_key = os.getenv('API_KEY')
     client = genai.Client(api_key=api_key)
 
-    # Use uploaded or predefined PDF
-    file_to_use = pdf or st.session_state.pdf_uploaded
-
-    if file_to_use is not None:
+    if pdf is not None:
         with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_file:
-            temp_file.write(file_to_use.getvalue())
+            temp_file.write(pdf.getvalue())
             temp_file_path = temp_file.name
         
         try:
@@ -49,7 +44,7 @@ def generate():
                     role="user",
                     parts=[
                         types.Part.from_uri(file_uri=files[0].uri, mime_type=files[0].mime_type),
-                        types.Part.from_text(text=st.session_state.selected_prompt),
+                        types.Part.from_text(text=prompt),
                     ],
                 ),
             ]
@@ -78,7 +73,7 @@ def generate():
 
 # Analyze PDF button
 if st.button("Analyze PDF"):
-    if pdf is not None or st.session_state.pdf_uploaded is not None:
+    if pdf is not None:
         generate()
     else:
         st.error("No PDF selected.")
@@ -146,14 +141,8 @@ if selected_subject:
     }
 
     # Display prompts as buttons
-    for prompt in prompts[selected_subject]:
-        if st.button(prompt):
-            st.session_state.selected_prompt = prompt
-
-    # Display selected prompt in text area
-    st.text_area("Selected Prompt", value=st.session_state.selected_prompt, height=100, key="prompt_display")
-
-    # Preload predefined PDF for prompts
-    if pdf is None and st.session_state.pdf_uploaded is None:
-        st.session_state.pdf_uploaded = st.file_uploader("Predefined PDF (Required)", type=["pdf"])
+    for prompt_text in prompts[selected_subject]:
+        if st.button(prompt_text):
+            st.session_state.selected_prompt = prompt_text
+            st.experimental_rerun()  # Rerun the app to update text area
 
