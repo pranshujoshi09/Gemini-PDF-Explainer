@@ -15,7 +15,7 @@ st.subheader("Prompt")
 col1, col2 = st.columns([3.5,1.5])
 
 with col1:
-    prompt = st.empty()
+    prompt = st.text_area("  ", height=132, placeholder="Ask anything..")
 with col2:
     pdf = st.file_uploader("  ", type=["pdf"])
 
@@ -104,5 +104,6 @@ for subject, prompts in subjects.items():
     with st.expander(subject):
         for p in prompts:
             if st.button(p, key=p):
+                prompt = p
                 st.success("Prompt set!")
                 generate(p)
