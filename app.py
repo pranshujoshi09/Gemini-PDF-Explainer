@@ -17,7 +17,7 @@ with col1:
     prompt = st.chat_input("Ask anything...")
 
 with col2:
-    pdf = st.file_uploader("Upload PDF", type=["pdf"])
+    pdf = st.button(st.file_uploader("Upload PDF", type=["pdf"]))
 
 def generate():
     api_key = os.getenv('API_KEY')
