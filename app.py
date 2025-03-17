@@ -100,10 +100,18 @@ subjects = {
     ]
 }
 
+selected_prompt = ""
 for subject, prompts in subjects.items():
     with st.expander(subject):
         for p in prompts:
             if st.button(p, key=p):
-                prompt = p
+                selected_prompt = p
                 st.success("Prompt set!")
-                generate(p)
+
+if st.button("Generate Response"):
+    if selected_prompt:
+        generate(selected_prompt)
+    elif prompt:
+        generate(prompt)
+    else:
+        st.error("Please enter or select a prompt first.")
