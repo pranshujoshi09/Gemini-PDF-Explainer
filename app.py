@@ -109,9 +109,8 @@ for subject, prompts in subjects.items():
                 st.success("Prompt set!")
 
 if st.button("Generate Response"):
-    if selected_prompt:
-        generate(selected_prompt)
-    elif prompt:
-        generate(prompt)
+    final_prompt = selected_prompt if selected_prompt else prompt
+    if final_prompt:
+        generate(final_prompt)
     else:
         st.error("Please enter or select a prompt first.")
