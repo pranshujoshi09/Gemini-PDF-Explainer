@@ -54,7 +54,7 @@ def generate(selected_prompt):
             
             for chunk in client.models.generate_content_stream(model=model, contents=contents, config=generate_content_config):
                 if chunk.text:
-                    full_response += chunk.text
+                    full_response += chunk.text + "\n"
                     response_container.markdown(full_response)
         except Exception as e:
             st.error(f"Error: {str(e)}")
@@ -109,8 +109,9 @@ for subject, prompts in subjects.items():
                 st.success("Prompt set!")
 
 if st.button("Generate Response"):
-    final_prompt = selected_prompt if selected_prompt else prompt
-    if final_prompt:
-        generate(final_prompt)
+    if selected_prompt:
+        generate(selected_prompt)
+    elif prompt:
+        generate(prompt)
     else:
         st.error("Please enter or select a prompt first.")
