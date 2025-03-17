@@ -10,11 +10,14 @@ dotenv.load_dotenv()
 st.subheader("System Message")
 system_msg = st.text_area("  ", height=150, placeholder="Write System message...")
 
-st.subheader("Upload PDF")
-pdf = st.file_uploader("  ", type=["pdf"])
+# Create columns to place chat input and file uploader side by side
+col1, col2 = st.columns([3, 1])
 
-# Chat input for prompt
-prompt = st.chat_input("Ask anything...")
+with col1:
+    prompt = st.chat_input("Ask anything...")
+
+with col2:
+    pdf = st.file_uploader("Upload PDF", type=["pdf"])
 
 def generate():
     api_key = os.getenv('API_KEY')
