@@ -89,6 +89,8 @@ if st.button("Analyze PDF"):
     if pdf is not None:
             generate()
 
+st.subheader("Subject Prompts-Press the button to get the Prompt)
+
 col3, col4, col5, col6, col7 = st.columns([1, 1.2, 1, 1, 1])
 selected_subject = None  
 
