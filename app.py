@@ -2,6 +2,7 @@ import streamlit as st
 from google import genai
 from google.genai import types
 import os
+import tempfile
 import dotenv
 
 dotenv.load_dotenv()
@@ -14,11 +15,11 @@ st.subheader("Prompt")
 col1, col2 = st.columns([3.5,1.5])
 
 with col1:
-    prompt = st.text_area("  ", height=132, placeholder="Ask anything..")
+    prompt = st.empty()
 with col2:
     pdf = st.file_uploader("  ", type=["pdf"])
 
-def generate():
+def generate(selected_prompt):
     api_key = os.getenv('API_KEY')
     client = genai.Client(api_key=api_key)
     
@@ -35,7 +36,7 @@ def generate():
                     role="user",
                     parts=[
                         types.Part.from_uri(file_uri=files[0].uri, mime_type=files[0].mime_type),
-                        types.Part.from_text(text=prompt),
+                        types.Part.from_text(text=selected_prompt),
                     ],
                 ),
             ]
@@ -60,11 +61,7 @@ def generate():
     else:
         st.error("Please upload a PDF file first.")
 
-if st.button("Analyze PDF"):
-    if pdf is not None:
-        generate()
-
-st.subheader("Subject Prompts - Click to Insert")
+st.subheader("Subject Prompts - Click to Set Prompt")
 subjects = {
     "Physics": [
         "આ પ્રકરણને સૌથી સરળ રીતે સમજાવો", 
@@ -107,4 +104,5 @@ for subject, prompts in subjects.items():
     with st.expander(subject):
         for p in prompts:
             if st.button(p, key=p):
-                prompt += f"\n{p}"
+                st.success("Prompt set!")
+                generate(p)
