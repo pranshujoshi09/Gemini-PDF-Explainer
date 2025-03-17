@@ -103,10 +103,8 @@ subjects = {
     ]
 }
 
-selected_prompt = st.empty()
-
 for subject, prompts in subjects.items():
     with st.expander(subject):
         for p in prompts:
             if st.button(p, key=p):
-                selected_prompt.text_area("  ", value=p, height=132)
+                prompt += f"\n{p}"
