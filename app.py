@@ -2,19 +2,11 @@ import streamlit as st
 from google import genai
 from google.genai import types
 import os
-import dotenv
-
 dotenv.load_dotenv()
 
 st.subheader("System Message")
 system_msg = st.text_area("  ", height=150, 
                           placeholder="Write System message...")
-
-st.subheader("Prompt")
-col1, col2 = st.columns([3.5,1.5])
-
-with col1:
-    prompt = st.text_area("  ", height=132, placeholder="Ask anything..")
 
 def generate(selected_prompt, pdf_path):
     api_key = os.getenv('API_KEY')
@@ -95,7 +87,7 @@ pdf_paths = {
     "Chemistry": "chemistery.pdf",
     "Biology": "biology.pdf",
     "Maths": "maths.pdf",
-    "Gujarati": "gujarati'.pdf"
+    "Gujarati": "gujarati.pdf"
 }
 
 selected_prompt = ""
@@ -106,12 +98,12 @@ for subject, prompts in subjects.items():
             if st.button(p, key=p):
                 selected_prompt = p
                 selected_pdf = pdf_paths[subject]
+                st.session_state['selected_prompt'] = selected_prompt
+                st.session_state['selected_pdf'] = selected_pdf
                 st.success(f"Prompt set! Using {subject} PDF.")
 
 if st.button("Generate Response"):
-    if selected_prompt and selected_pdf:
-        generate(selected_prompt, selected_pdf)
-    elif prompt:
-        st.error("Please select a predefined prompt to use the corresponding PDF.")
+    if 'selected_prompt' in st.session_state and 'selected_pdf' in st.session_state:
+        generate(st.session_state['selected_prompt'], st.session_state['selected_pdf'])
     else:
-        st.error("Please enter or select a prompt first.")
+        st.error("Please select a predefined prompt to use the corresponding PDF.")
